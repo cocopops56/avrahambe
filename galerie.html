@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie - AvrahamBe</title>
+    <!-- Polices Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- CSS Intégré -->
+    <style>
+        /* Réinitialisation et Variables */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --background-color: #f7f7f5; /* Blanc cassé / Beige très clair */
+            --text-color: #1a1a1a;       /* Noir très foncé */
+            --border-color: #e0e0e0;     /* Gris très clair pour lignes */
+            --heading-font: 'Montserrat', sans-serif;
+            --body-font: 'Inter', sans-serif;
+            --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Ajout pour survol galerie */
+        }
+
+        /* Styles Body, Liens, Images */
+        body {
+            font-family: var(--body-font); background-color: var(--background-color);
+            color: var(--text-color); line-height: 1.6; font-size: 16px;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+        a { color: var(--text-color); text-decoration: none; transition: opacity 0.3s ease; }
+        a:hover { opacity: 0.7; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* Conteneur Principal */
+        .container { width: 90%; max-width: 1300px; margin: 0 auto; }
+
+        /* Header / Navigation (Style Reseda) */
+        .main-header { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .main-header .container { display: flex; justify-content: space-between; align-items: center; }
+        .site-title {
+            font-family: var(--heading-font); font-weight: 700; font-size: 1.1rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .main-nav ul { list-style: none; display: flex; gap: 2rem; }
+        .main-nav a {
+            font-family: var(--body-font); font-weight: 500; font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 0.1em; position: relative; padding-bottom: 4px;
+        }
+        .main-nav a.active::after, .main-nav a:hover::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+            background-color: var(--text-color);
+        }
+
+        /* Main Content Area */
+        main { flex-grow: 1; padding: 3rem 0; }
+
+        /* Section Générique */
+        .content-section { margin-bottom: 3rem; }
+        .content-section h2 {
+            font-family: var(--heading-font); font-weight: 700; font-size: 1.8rem;
+            margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .content-section p {
+            max-width: 700px; margin-bottom: 1rem; font-weight: 300; line-height: 1.7;
+        }
+
+        /* Galerie Styles (avec Zoom survol) */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;
+        }
+        .gallery-item {
+            background-color: #fff; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease; /* Transition ombre uniquement */
+            cursor: pointer; position: relative;
+        }
+        .gallery-item img {
+            width: 100%; height: 350px; object-fit: cover; display: block;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Transition zoom */
+        }
+        .gallery-item:hover img {
+            transform: scale(1.08); /* Zoom au survol */
+        }
+        .gallery-item:hover {
+            box-shadow: var(--hover-shadow); /* Ombre plus marquée au survol */
+        }
+        .gallery-item figcaption { padding: 1rem 1.2rem; text-align: left; }
+        .gallery-item h3 {
+            font-family: var(--heading-font); font-weight: 700; font-size: 1rem;
+            margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .gallery-item p {
+            font-size: 0.9rem; color: #555; font-weight: 400; margin-bottom: 0; max-width: none;
+        }
+
+        /* Footer */
+        .main-footer {
+            padding: 1.5rem 0; border-top: 1px solid var(--border-color); margin-top: 3rem;
+            text-align: center; font-size: 0.85rem; color: #777; font-weight: 300;
+        }
+
+        /* Lightbox Modal Styles (adaptés pour clic-zoom) */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; /* IMPORTANT: Pour scroll si image zoomée dépasse */
+            background-color: rgba(26, 26, 26, 0.92); /* Fond noir un peu plus opaque */
+            padding: 20px; padding-top: 70px; /* Espace pour bouton fermer */
+            text-align: center; /* Centre l'image si plus petite que le modal */
+        }
+        .close-button {
+            position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px;
+            font-weight: bold; transition: 0.3s; cursor: pointer; z-index: 1010;
+        }
+        .close-button:hover, .close-button:focus { color: #bbb; }
+
+        /* Conteneur optionnel, utile pour centrage */
+        .modal-image-container { display: inline-block; max-width: 100%; line-height: 0; }
+
+        .modal-content { /* L'image dans la lightbox */
+            display: block; max-width: 100%;
+            max-height: calc(100vh - 140px); /* Hauteur max initiale (ajuste si besoin) */
+            margin: auto;
+            transition: transform 0.3s ease; /* Transition pour zoom */
+            transform-origin: center center; /* Zoom depuis le centre */
+            cursor: zoom-in; /* Curseur initial */
+        }
+
+        #caption {
+            margin: 15px auto; display: block; width: 80%; max-width: 700px; text-align: center;
+            color: #ccc; font-size: 1rem; font-weight: 300; padding-bottom: 20px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .main-header .container { flex-direction: column; align-items: center; gap: 1rem; }
+            .main-nav ul { gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+            .main-nav a { font-size: 0.8rem; }
+            main { padding: 2rem 0; }
+            .content-section h2 { font-size: 1.5rem; text-align: center; }
+            .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+            .gallery-item img { height: 300px; }
+            .modal-content { max-height: calc(100vh - 120px); }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="site-title">AvrahamBe</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="galerie.html" class="active">Galerie</a></li>
+                    <li><a href="a-propos.html">À Propos</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section id="gallery" class="content-section">
+                <h2 style="text-align: center;">Galerie d'Œuvres</h2>
+                <div class="gallery-grid">
+                    <!-- Peinture 1 -->
+                    <figure class="gallery-item">
+                        <!-- ATTENTION: Chemin vers images/ et nom fichier sans espace -->
+                        <img src="images/img_8910_2.jpg" alt="Menorah étoilée stylisée sur fond texturé">
+                        <figcaption>
+                            <h3>Menorah etoilée</h3>
+                            <p>Acrylique sur toile, 2024</p>
+                        </figcaption>
+                    </figure>
+
+                    <!-- Peinture 2 -->
+                    <figure class="gallery-item">
+                        <!-- ATTENTION: Chemin vers images/ et nom fichier sans espace -->
+                        <img src="images/img_8916_2.jpg" alt="Représentation abstraite et colorée de Times Square">
+                        <figcaption>
+                            <h3>Crazy TimeSquare</h3>
+                            <p>Acrylique, 2024</p>
+                        </figcaption>
+                    </figure>
+
+                    <!-- Peinture 3 -->
+                    <figure class="gallery-item">
+                        <!-- ATTENTION: Chemin vers images/ et nom fichier sans espace -->
+                        <img src="images/img_7606.jpg" alt="Vue du Mur des Lamentations (Kotel) sous un soleil éclatant">
+                        <figcaption>
+                            <h3>HaKotel le mure de la veritée</h3>
+                            <p>Acrylique, 2025</p>
+                        </figcaption>
+                    </figure>
+
+                    <!-- Ajoute d'autres <figure> ici si besoin -->
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+     <!-- Modal (Lightbox) Structure -->
+     <div id="lightbox-modal" class="modal">
+        <span class="close-button">&times;</span>
+        <!-- Conteneur optionnel pour l'image -->
+        <div class="modal-image-container">
+            <img class="modal-content" id="lightbox-image">
+        </div>
+        <div id="caption"></div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> AvrahamBe. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Intégré -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // --- Variables ---
+            const yearSpan = document.getElementById('year');
+            const modal = document.getElementById('lightbox-modal');
+            const modalImg = document.getElementById('lightbox-image');
+            const captionText = document.getElementById('caption');
+            const galleryClickableItems = document.querySelectorAll('.gallery-item'); // Items cliquables de la galerie
+            const closeButton = modal.querySelector('.close-button'); // Bouton fermer DANS le modal
+
+            let currentZoomLevel = 1; // Niveau de zoom actuel (1x, 2x, 3x)
+            const maxZoomLevel = 3;   // Niveau de zoom maximum
+
+            // --- Mise à jour Année Footer ---
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+
+            // --- Vérification initiale des éléments essentiels ---
+            if (!modal || !modalImg || !captionText || !closeButton) {
+                console.error("Erreur: Éléments de la lightbox manquants (modal, image, caption, ou close button).");
+                return; // Arrête si les éléments de base manquent
+            }
+
+            // --- Logique d'ouverture de la Lightbox ---
+            if (galleryClickableItems.length > 0) {
+                galleryClickableItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const imgElement = this.querySelector('img');
+                        const figcaption = this.querySelector('figcaption');
+                        if (!imgElement) {
+                            console.warn("Image non trouvée dans l'élément de galerie cliqué.");
+                            return; // Ne fait rien si pas d'image
+                        }
+
+                        resetZoom(); // Réinitialise le zoom à chaque ouverture
+
+                        modal.style.display = "block"; // Affiche le modal
+                        document.body.style.overflow = 'hidden'; // Bloque le scroll de la page
+
+                        modalImg.src = imgElement.src; // Définit la source de l'image dans le modal
+
+                        // Met à jour la légende
+                        if (figcaption) {
+                            let title = figcaption.querySelector('h3')?.innerText || '';
+                            let details = figcaption.querySelector('p')?.innerText || '';
+                            captionText.innerHTML = `${title}${title && details ? ' - ' : ''}${details}`;
+                        } else {
+                            captionText.innerHTML = imgElement.alt || ''; // Utilise alt si pas de légende
+                        }
+                    });
+                });
+            } else {
+                console.warn("Aucun élément '.gallery-item' trouvé pour initialiser la galerie.");
+            }
+
+            // --- Gestionnaire de clic sur l'image DANS le modal pour zoomer ---
+            modalImg.addEventListener('click', function(event) {
+                 // Empêche le clic de se propager au modal (qui fermerait la lightbox)
+                 event.stopPropagation();
+
+                 currentZoomLevel++; // Passe au niveau de zoom suivant
+                 if (currentZoomLevel > maxZoomLevel) {
+                     currentZoomLevel = 1; // Revient à 1x si on dépasse le max
+                 }
+                 applyZoomState(); // Applique le nouveau zoom et curseur
+            });
+
+            // --- Fonction pour appliquer le style de zoom et le curseur ---
+            function applyZoomState() {
+                 modalImg.style.transform = `scale(${currentZoomLevel})`;
+                 modalImg.style.cursor = (currentZoomLevel > 1) ? 'zoom-out' : 'zoom-in';
+            }
+
+            // --- Fonction pour réinitialiser le zoom ---
+            function resetZoom() {
+                currentZoomLevel = 1;
+                applyZoomState(); // Applique scale(1) et cursor zoom-in
+            }
+
+            // --- Fonction pour fermer le modal ---
+            function closeModal() {
+                modal.style.display = "none"; // Cache le modal
+                document.body.style.overflow = ''; // Réactive le scroll de la page
+                resetZoom(); // Réinitialise l'état de zoom de l'image
+                modalImg.src = ""; // Vide la source de l'image (bonne pratique)
+                captionText.innerHTML = ""; // Vide la légende
+            }
+
+            // --- Écouteurs pour fermer le modal ---
+            // Bouton (X)
+            closeButton.addEventListener('click', closeModal);
+
+            // Clic sur le fond noir (le modal lui-même)
+            modal.addEventListener('click', function(event) {
+                // Vérifie que le clic est bien sur l'élément modal (le fond) et non sur un enfant (comme l'image)
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Touche Échap
+            document.addEventListener('keydown', function(event) {
+                // Vérifie si la touche est Échap et si le modal est visible
+                if (event.key === "Escape" && modal.style.display === "block") {
+                    closeModal();
+                }
+            });
+
+        }); // Fin de DOMContentLoaded
+    </script>
+</body>
+</html>
