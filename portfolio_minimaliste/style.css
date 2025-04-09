@@ -1,0 +1,315 @@
+/* Réinitialisation et Box Sizing */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Variables (Adapte les couleurs et polices si besoin) */
+:root {
+    --background-color: #f7f7f5; /* Blanc cassé / Beige très clair */
+    --text-color: #1a1a1a;       /* Noir très foncé (pas tout à fait noir) */
+    --border-color: #e0e0e0;     /* Gris très clair pour les lignes fines */
+    --heading-font: 'Montserrat', sans-serif; /* Police pour les titres (bold) */
+    --body-font: 'Inter', sans-serif;      /* Police pour le corps de texte (clean) */
+}
+
+/* Importation des polices Google Fonts (à mettre dans le <head> de chaque HTML aussi) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Montserrat:wght@700;900&display=swap');
+
+body {
+    font-family: var(--body-font);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 16px; /* Base font size */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Conteneur Principal */
+.container {
+    width: 90%;
+    max-width: 1300px; /* Largeur max pour le contenu */
+    margin: 0 auto;
+}
+
+/* Header / Navigation */
+.main-header {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    font-size: 1.1rem; /* Ajuste si besoin */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem; /* Espace entre les liens */
+}
+
+.main-nav a {
+    font-family: var(--body-font);
+    font-weight: 500;
+    font-size: 0.85rem; /* Légèrement plus petit */
+    text-transform: uppercase;
+    letter-spacing: 0.1em; /* Espacement comme dans l'exemple */
+    position: relative; /* Pour le soulignement potentiel au survol/actif */
+    padding-bottom: 4px; /* Espace pour la ligne */
+}
+
+/* Style pour le lien actif (Optionnel, via JS ou classe manuelle) */
+.main-nav a.active::after,
+.main-nav a:hover::after { /* Ligne simple sous le lien au survol/actif */
+     content: '';
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     width: 100%;
+     height: 1px;
+     background-color: var(--text-color);
+     /* animation: fadeIn 0.3s ease; */ /* Optionnel: petite animation */
+}
+
+/* Main Content Area */
+main {
+    flex-grow: 1; /* Occupe l'espace restant */
+    padding: 3rem 0; /* Espace vertical */
+}
+
+/* Style pour les gros titres (comme "RESEDA") */
+.page-title-big {
+    font-family: var(--heading-font);
+    font-weight: 900; /* Très gras */
+    font-size: clamp(4rem, 15vw, 10rem); /* Taille responsive! */
+    line-height: 1;
+    letter-spacing: -0.03em; /* Rapproche un peu les lettres */
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    text-align: left; /* Ou center selon la page */
+}
+
+/* Style pour les sous-titres ou descriptions */
+.subtitle {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+/* Section Générique */
+.content-section {
+    margin-bottom: 3rem;
+}
+
+.content-section h2 {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.content-section p {
+    max-width: 700px; /* Limite la largeur des paragraphes pour la lisibilité */
+    margin-bottom: 1rem;
+    font-weight: 300; /* Texte un peu plus léger */
+    line-height: 1.7;
+}
+
+/* Galerie Styles */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colonnes responsives */
+    gap: 2rem;
+}
+
+.gallery-item {
+    background-color: #fff; /* Fond blanc pour les items */
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 350px; /* Hauteur fixe pour uniformité */
+    object-fit: cover;
+}
+
+.gallery-item figcaption {
+    padding: 1rem 1.2rem;
+    text-align: left;
+}
+
+.gallery-item h3 {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.gallery-item p {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: 400;
+    margin-bottom: 0;
+    max-width: none; /* Annule la limite de largeur pour la légende */
+}
+
+/* Footer */
+.main-footer {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border-color);
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #777;
+    font-weight: 300;
+}
+
+/* Lightbox Modal Styles (Repris de l'exemple précédent, adaptés) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(26, 26, 26, 0.9); /* Fond un peu plus foncé */
+    padding-top: 60px;
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 85%;
+    animation-name: zoomIn;
+    animation-duration: 0.4s;
+}
+
+@keyframes zoomIn {
+    from {transform: scale(0.8); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+#caption {
+    margin: 15px auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #bbb;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-header .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .main-nav ul {
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap; /* Permet aux liens de passer à la ligne */
+    }
+
+    .main-nav a {
+        font-size: 0.8rem;
+    }
+
+    main {
+        padding: 2rem 0;
+    }
+
+    .page-title-big {
+       /* La taille via clamp() s'adapte déjà, mais on peut forcer si besoin */
+       text-align: center;
+    }
+
+    .content-section h2 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    .content-section p {
+       max-width: 95%;
+       margin-left: auto;
+       margin-right: auto;
+       text-align: center;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .gallery-item img {
+        height: 300px;
+    }
+}
